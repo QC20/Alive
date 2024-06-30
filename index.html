@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Particle Animation</title>
+    <link rel="stylesheet" href="src/styles/styles.css">
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r17/Stats.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
+    
+    <script id="butterfly-vertex" type="x-shader/x-fragment">
+    #define PI 3.14159265358979323846
+
+precision highp float;
+attribute float count;
+uniform float u_total;
+uniform float u_time;
+uniform float u_pointSize;
+uniform float u_noiseDiff;
+uniform float u_radius;
+void main(){
+  vec3 pos = position;
+  pos.x = snoise(vec3(sin(count/u_total * u_noiseDiff * 200.   * PI + u_time ))) ;
+  pos.y = snoise(vec3(sin(count/u_total * u_noiseDiff * 200. * PI + PI / 3. * 2. + u_time) ) );
+  pos.z = snoise(vec3(sin(count/u_total * u_noiseDiff * 200.   * PI + PI / 3. + u_time )  ) );
+  float distance = snoise(vec3(length(pos)));
+  vec3 r = curlNoise(vec3((distance ) * smoothstep(-0.9,0.9,sin(u_time *10.)) *2. -1. )) ;
+  pos *= r *u_radius + 5.;
+  gl_PointSize = u_pointSize;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos,1.);
+}
+    </script>
+    <script id="deer-vertex" type="x-shader/x-fragment">
+    #define PI 3.14159265358979323846
+
+precision highp float;
+attribute float count;
+uniform float u_total;
+uniform float u_time;
+uniform float u_pointSize;
+uniform float u_noiseDiff;
+uniform float u_radius;
+void main(){
+  vec3 pos = position;
+  float noiseChange =  u_time * smoothstep(0.,1.,sin(u_time * 20.)) * u_noiseDiff;
+  pos.x = snoise(vec3(sin(count/u_total    * PI + noiseChange ))) ;
+  pos.y = snoise(vec3(sin(count/u_total   * PI + PI / 3. * 2. + noiseChange ) ) );
+  pos.z = snoise(vec3(sin(count/u_total    * PI + PI / 3. + noiseChange )  ) );
+  float distance = length(pos);
+  vec3 r = curlNoise(vec3((distance ) + smoothstep(-0.9,0.9,sin(u_time *10.)) *2. -1. )) ;
+  pos *= r* u_radius + 5.;
+  gl_PointSize = u_pointSize;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos,1.);
+}
+    </script>
+    <script id="search-vertex" type="x-shader/x-fragment">
+    #define PI 3.14159265358979323846
+
+precision highp float;
+attribute float count;
+uniform float u_total;
+uniform float u_time;
+uniform float u_pointSize;
+uniform float u_noiseDiff;
+uniform float u_radius;
+void main(){
+  vec3 pos = position;
+  pos.x = snoise(vec3(sin(count/u_total * PI + u_time))) ;
+  pos.y = snoise(vec3(sin(count/u_total * PI + PI / 3. * 2. + u_time) ) );
+  pos.z = snoise(vec3(sin(count/u_total * PI + PI / 3. + u_time)  ) );
+  float distance = length(pos);
+  vec3 r = curlNoise(vec3((distance ) * u_time *20. *1. )) ;
+  pos *= r * u_radius + 1.;
+  gl_PointSize = u_pointSize;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos,1.);
+}
+    </script>
+    <script id="home-vertex" type="x-shader/x-fragment">
+precision highp float;
+attribute float count;
+uniform float u_total;
+uniform float u_time;
+uniform float u_pointSize;
+uniform float u_noiseDiff;
+uniform float u_radius;
+void main(){
+  vec3 pos = position;
+  pos.x = snoise(vec3(count ) * u_time);
+  pos.y = snoise(vec3(count ) * u_time);
+  pos.z = snoise(vec3(count )*u_time);
+  float distance = length(pos);
+  vec3 r = curlNoise(vec3((distance + 0.) * 1.  + u_time * 10.)) * u_radius + 1.;
+  pos *= r;
+  gl_PointSize = u_pointSize;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos,1.);
+}
+    </script>
+    <script id="time-vertex" type="x-shader/x-fragment">
+    #define PI 3.14159265358979323846
+precision highp float;
+attribute float count;
+uniform float u_total;
+uniform float u_time;
+uniform float u_pointSize;
+uniform float u_noiseDiff;
+uniform float u_radius;
+void main(){
+  vec3 pos = position;
+  float distance = 0.;
+  pos.x = snoise(vec3(count / u_total * u_time ) );
+  pos.y = snoise(vec3( count / u_total * u_time+ PI /3. * 2. ));
+  pos.z = snoise(vec3( count/u_total * u_time + PI/3.) ) ;
+  distance = length(pos);
+  vec3 r = curlNoise(vec3( sin(distance * PI) * u_time ));
+  pos *= r* u_radius + 1.;
+  gl_PointSize = u_pointSize;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos,1.);
+}
+    </script>
+    <script id="fragment" type="x-shader/x-fragment">
+void main(){
+  gl_FragColor = vec4(vec3(1.),1.);
+}
+    </script>
+    <script id="curlnoise" type="x-shader/x-fragment">
+    // Curl noise implementation (content of curlnoise script)
+    // ... (The full content of the curlnoise script should be placed here)
+    </script>
+    
+    <script src="src/javascript/sketch.js"></script>
+</body>
+</html>
